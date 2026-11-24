@@ -47,6 +47,8 @@ export function Header() {
           <Link
             className="bag-link"
             href="/bag"
+            aria-live="polite"
+            aria-atomic="true"
             aria-label={
               'Sacola, ' +
               itemCount +

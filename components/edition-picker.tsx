@@ -7,10 +7,16 @@ export function EdiçãoPicker({ book }: { book: Book }) {
   const { add, lines, ready } = useBag(),
     [sku, select] = useState(
       book.editions.find((x) => x.available)?.sku ?? book.editions[0].sku,
-    ),
-    [added, setAdded] = useState(false);
+    );
   const edition = book.editions.find((e) => e.sku === sku)!,
     inBag = lines.find((x) => x.sku === sku)?.quantity ?? 0;
+  const buttonText = !ready
+    ? 'Carregando sacola…'
+    : edition.available === 0
+      ? 'Esgotado'
+      : inBag >= Math.min(edition.available, 99)
+        ? 'Quantidade máxima na sacola'
+        : 'Adicionar à sacola';
   return (
     <div className="purchase">
       <fieldset>
@@ -24,7 +30,6 @@ export function EdiçãoPicker({ book }: { book: Book }) {
                 checked={sku === e.sku}
                 onChange={() => {
                   select(e.sku);
-                  setAdded(false);
                 }}
               />
               {e.format}
@@ -47,15 +52,11 @@ export function EdiçãoPicker({ book }: { book: Book }) {
         disabled={!ready || inBag >= edition.available || inBag >= 99}
         onClick={() => {
           add(book, sku, 1);
-          setAdded(true);
         }}
       >
         <Icon name="bag" size={18} />
-        {edition.available === 0 ? 'Esgotado' : 'Adicionar à sacola'}
+        {buttonText}
       </button>
-      <div className="inline-status" aria-live="polite">
-        {added ? 'Adicionado à sua sacola. ' : ''}
-      </div>
     </div>
   );
 }

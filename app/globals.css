@@ -107,7 +107,8 @@ small {
   color: var(--muted);
 }
 .header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
   background: #151514;
   border-bottom: 1px solid #33312d;
@@ -525,9 +526,6 @@ legend {
 .hint {
   font-size: 0.88rem;
   color: var(--muted);
-}
-.inline-status {
-  margin-top: 6px;
 }
 .staff-note {
   margin-top: 22px;

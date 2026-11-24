@@ -1,6 +1,54 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
+for (const [device, viewport] of [
+  ['desktop', { width: 1440, height: 900 }],
+  ['mobile', { width: 390, height: 844 }],
+] as const) {
+  test(`book availability is shown in the button and the cart stays visible on ${device}`, async ({ page }, info) => {
+    const book = {
+      slug: 'frankenstein',
+      title: 'Frankenstein',
+      author: 'Mary Shelley',
+      genre: 'Terror gótico',
+      synopsis: 'Victor Frankenstein dá vida a uma criatura e a abandona. '.repeat(40),
+      note: 'Um clássico do terror gótico.',
+      editions: [
+        { sku: 'FRAN-PB', format: 'Paperback', price: 4490, available: 1 },
+        { sku: 'FRAN-HC', format: 'Capa dura', price: 8490, available: 0 },
+      ],
+    };
+    await page.setViewportSize(viewport);
+    await page.route('**/v1/books/frankenstein', (route) => route.fulfill({ json: book }));
+    await page.goto('/books/frankenstein');
+    const add = page.getByRole('button', { name: 'Adicionar à sacola', exact: true });
+    await add.scrollIntoViewIfNeeded();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(100);
+    await expect.poll(async () => (await page.locator('.header').boundingBox())!.y).toBe(0);
+    await add.click();
+    await expect(page.getByRole('link', { name: 'Sacola, 1 item', exact: true })).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+    await expect(page.getByText('Adicionado à sua sacola.', { exact: true })).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath(`sticky-book-${device}.png`) });
+
+    await page.getByRole('radio', { name: 'Capa dura', exact: true }).check();
+    await expect(page.getByRole('button', { name: 'Esgotado', exact: true })).toBeDisabled();
+    await page.getByRole('radio', { name: 'Paperback', exact: true }).check();
+    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+
+    book.editions[0].available = 120;
+    await page.evaluate(() => {
+      const key = 'nightjar.bag.v1';
+      const lines = JSON.parse(localStorage.getItem(key)!);
+      lines[0].quantity = 99;
+      localStorage.setItem(key, JSON.stringify(lines));
+    });
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+    await expect(page.locator('.bag-link .count')).toHaveText('99');
+  });
+}
+
 test('desktop catalogue uses the direct API and has twelve Portuguese titles', async ({
   page,
 }, info) => {
