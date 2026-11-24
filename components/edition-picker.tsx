@@ -15,8 +15,10 @@ export function EdiçãoPicker({ book }: { book: Book }) {
     : edition.available === 0
       ? 'Esgotado'
       : inBag >= Math.min(edition.available, 99)
-        ? 'Quantidade máxima na sacola'
-        : 'Adicionar à sacola';
+        ? `${inBag} na sacola · Limite atingido`
+        : inBag > 0
+          ? `Adicionar mais · ${inBag} na sacola`
+          : 'Adicionar à sacola';
   return (
     <div className="purchase">
       <fieldset>
@@ -49,6 +51,8 @@ export function EdiçãoPicker({ book }: { book: Book }) {
       </div>
       <button
         className="primary"
+        aria-live="polite"
+        aria-atomic="true"
         disabled={!ready || inBag >= edition.available || inBag >= 99}
         onClick={() => {
           add(book, sku, 1);

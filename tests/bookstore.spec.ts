@@ -14,7 +14,7 @@ for (const [device, viewport] of [
       synopsis: 'Victor Frankenstein dá vida a uma criatura e a abandona. '.repeat(40),
       note: 'Um clássico do terror gótico.',
       editions: [
-        { sku: 'FRAN-PB', format: 'Paperback', price: 4490, available: 1 },
+        { sku: 'FRAN-PB', format: 'Paperback', price: 4490, available: 3 },
         { sku: 'FRAN-HC', format: 'Capa dura', price: 8490, available: 0 },
       ],
     };
@@ -27,14 +27,31 @@ for (const [device, viewport] of [
     await expect.poll(async () => (await page.locator('.header').boundingBox())!.y).toBe(0);
     await add.click();
     await expect(page.getByRole('link', { name: 'Sacola, 1 item', exact: true })).toBeInViewport();
-    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+    const purchaseButton = page.locator('.purchase button');
+    await expect(purchaseButton).toHaveText('Adicionar mais · 1 na sacola');
+    await purchaseButton.click();
+    await expect(purchaseButton).toHaveText('Adicionar mais · 2 na sacola');
+    await expect(page.locator('.bag-link .count')).toHaveText('2');
+    await page.getByRole('radio', { name: 'Capa dura', exact: true }).check();
+    await expect(purchaseButton).toHaveText('Esgotado');
+    await expect(purchaseButton).toBeDisabled();
+    await page.getByRole('radio', { name: 'Paperback', exact: true }).check();
+    await expect(purchaseButton).toHaveText('Adicionar mais · 2 na sacola');
+    await purchaseButton.click();
+    await expect(purchaseButton).toHaveText('3 na sacola · Limite atingido');
+    await expect(purchaseButton).toBeDisabled();
+    await expect(page.locator('.bag-link .count')).toHaveText('3');
     await expect(page.getByText('Adicionado à sua sacola.', { exact: true })).toHaveCount(0);
     await page.screenshot({ path: info.outputPath(`sticky-book-${device}.png`) });
 
     await page.getByRole('radio', { name: 'Capa dura', exact: true }).check();
     await expect(page.getByRole('button', { name: 'Esgotado', exact: true })).toBeDisabled();
     await page.getByRole('radio', { name: 'Paperback', exact: true }).check();
-    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+    await expect(purchaseButton).toHaveText('3 na sacola · Limite atingido');
+    await expect(purchaseButton).toBeDisabled();
+    await page.reload();
+    await expect(purchaseButton).toHaveText('3 na sacola · Limite atingido');
+    await expect(purchaseButton).toBeDisabled();
 
     book.editions[0].available = 120;
     await page.evaluate(() => {
@@ -44,7 +61,8 @@ for (const [device, viewport] of [
       localStorage.setItem(key, JSON.stringify(lines));
     });
     await page.reload();
-    await expect(page.getByRole('button', { name: 'Quantidade máxima na sacola', exact: true })).toBeDisabled();
+    await expect(purchaseButton).toHaveText('99 na sacola · Limite atingido');
+    await expect(purchaseButton).toBeDisabled();
     await expect(page.locator('.bag-link .count')).toHaveText('99');
   });
 }
