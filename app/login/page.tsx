@@ -9,6 +9,7 @@ export default function Login() {
     [token, setToken] = useState(''),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(''),
+    [inboxUrl, setInboxUrl] = useState(''),
     [error, setError] = useState('');
   useEffect(() => {
     function readToken() {
@@ -16,6 +17,7 @@ export default function Login() {
       if (value) {
         setToken(value);
         setMessage('');
+        setInboxUrl('');
         setError('');
         history.replaceState(null, '', '/login');
       }
@@ -27,8 +29,12 @@ export default function Login() {
   async function send() {
     setBusy(true);
     setError('');
+    setMessage('');
+    setInboxUrl('');
     try {
-      setMessage((await authRequest('link', { email })).message);
+      const result = await authRequest('link', { email });
+      setMessage(result.message);
+      setInboxUrl(result.inboxUrl ?? '');
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -94,6 +100,16 @@ export default function Login() {
           </form>
         )}
         {message && <p role="status">{message}</p>}
+        {inboxUrl && (
+          <a
+            className="text-link"
+            href={inboxUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Abrir caixa de e-mail de teste
+          </a>
+        )}
         {error && (
           <p role="alert" className="notice">
             {error}

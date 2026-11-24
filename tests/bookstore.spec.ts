@@ -23,6 +23,11 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
       .first()
       .evaluate((el) => el.getBoundingClientRect().width),
   ).toBeLessThan(240);
+  await page.goto('/books/frankenstein');
+  await expect(
+    page.getByRole('radio', { name: 'Paperback', exact: true }),
+  ).toBeVisible();
+  await page.goto('/');
   await page.getByRole('button', { name: 'Buscar livros' }).click();
   await page
     .getByRole('textbox', { name: 'Buscar nas estantes' })
@@ -45,6 +50,12 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   ).toBe(true);
   await page.screenshot({ path: info.outputPath('mobile.png') });
   await page.goto('/books/carmilla');
+  await expect(
+    page.getByRole('heading', { name: 'Sinopse', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator('section[aria-labelledby="book-synopsis"]'),
+  ).toContainText('Uma visitante fascinante');
   await page.getByRole('button', { name: 'Adicionar à sacola' }).click();
   await page.getByRole('link', { name: 'Ver sacola (1)' }).click();
   await expect(
@@ -59,7 +70,12 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   const email = 'browser-' + Date.now() + '@example.test';
   await page.getByRole('textbox', { name: 'E-mail', exact: true }).fill(email);
   await page.getByRole('button', { name: 'Enviar link de acesso' }).click();
-  await expect(page.getByRole('status')).toContainText('Enviamos um link');
+  await expect(page.getByRole('status')).toContainText(
+    'caixa de e-mail de desenvolvimento',
+  );
+  await expect(
+    page.getByRole('link', { name: 'Abrir caixa de e-mail de teste' }),
+  ).toHaveAttribute('href', 'http://localhost:8025');
   const messages = await (
     await request.get('http://localhost:8025/api/v1/messages')
   ).json();

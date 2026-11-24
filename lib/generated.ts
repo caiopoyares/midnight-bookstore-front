@@ -790,6 +790,11 @@ export interface operations {
                 content: {
                     "application/json": {
                         message: string;
+                        /**
+                         * Format: uri
+                         * @description Caixa de e-mail disponível no ambiente local de desenvolvimento.
+                         */
+                        inboxUrl?: string;
                     };
                 };
             };

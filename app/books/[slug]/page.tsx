@@ -29,7 +29,15 @@ export default function BookPage() {
           <span className="smallcap accent">{book.genre}</span>
           <h1>{book.title}</h1>
           <p className="byline">por {book.author}</p>
-          <p>{book.synopsis}</p>
+          <section
+            aria-labelledby="book-synopsis"
+            style={{ marginBlock: '24px' }}
+          >
+            <h2 id="book-synopsis" style={{ fontSize: '1.55rem' }}>
+              Sinopse
+            </h2>
+            <p>{book.synopsis}</p>
+          </section>
           <EdiçãoPicker book={book} />
           <aside className="staff-note">
             <h2>Indicação da livraria</h2>

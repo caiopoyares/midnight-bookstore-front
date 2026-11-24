@@ -527,6 +527,11 @@
                   "properties": {
                     "message": {
                       "type": "string"
+                    },
+                    "inboxUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Caixa de e-mail dispon\u00edvel no ambiente local de desenvolvimento."
                     }
                   },
                   "required": [
