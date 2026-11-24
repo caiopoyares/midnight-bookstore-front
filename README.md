@@ -28,6 +28,8 @@ npm run dev
 
 A API precisa estar em execução. Configure NEXT_PUBLIC_API_URL para o endereço público alcançável pelo navegador. No Docker, esse valor é um argumento de construção da imagem. STOREFRONT_URL no backend deve corresponder à origem da loja para permitir CORS e cookies. Use o mesmo hostname local, localhost, nos dois endereços.
 
+As variáveis NEXT_PUBLIC_ são públicas e entram no código enviado ao navegador. Mantenha as senhas do banco, STAFF_KEYS e as credenciais de Stripe e Resend na configuração do backend. O Git ignora os arquivos .env e suas variantes; .env.example contém somente a URL pública de exemplo. Os relatórios e traces dos testes também são ignorados, pois podem conter dados da sessão de teste.
+
 O contrato é versionado em contract/openapi-1.1.0.json. Ao atualizá-lo, execute npm run api:generate e npm run build.
 
 Com o Compose em execução, rode os testes de navegador:
