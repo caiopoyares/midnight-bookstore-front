@@ -5,38 +5,38 @@ import { Book, money } from '../lib/api';
 import { Cover } from './cover';
 import { Icon } from './icons';
 export function Shelves({ books, query }: { books: Book[]; query: string }) {
-  const [genre, setGenre] = useState('All books'),
+  const [genre, setGenre] = useState('Todos os livros'),
     [search, setSearch] = useState(query),
-    [format, setFormat] = useState('All formats'),
+    [format, setFormat] = useState('Todos os formatos'),
     [stock, setStock] = useState(false),
-    [filters, setFilters] = useState(Boolean(query));
-  const genres = ['All books', ...new Set(books.map((b) => b.genre))];
+    [filters, setFiltros] = useState(Boolean(query));
+  const genres = ['Todos os livros', ...new Set(books.map((b) => b.genre))];
   const visible = books.filter(
     (b) =>
-      (genre === 'All books' || b.genre === genre) &&
+      (genre === 'Todos os livros' || b.genre === genre) &&
       (b.title + ' ' + b.author)
         .toLowerCase()
         .includes(search.toLowerCase().trim()) &&
       b.editions.some(
         (e) =>
-          (format === 'All formats' || e.format === format) &&
+          (format === 'Todos os formatos' || e.format === format) &&
           (!stock || e.available > 0),
       ),
   );
   return (
     <section id="shelves" className="shelves shell">
       <div className="shelf-title">
-        <h2>On the shelves</h2>
+        <h2>Nas estantes</h2>
         <button
           className="outline filter-toggle"
           aria-expanded={filters}
-          onClick={() => setFilters(!filters)}
+          onClick={() => setFiltros(!filters)}
         >
           <Icon name="filter" size={17} />
-          Filters{format !== 'All formats' || stock || search ? ' •' : ''}
+          Filtros{format !== 'Todos os formatos' || stock || search ? ' •' : ''}
         </button>
       </div>
-      <div className="tabs" aria-label="Subgenre">
+      <div className="tabs" aria-label="Subgênero">
         {genres.map((g) => (
           <button
             key={g}
@@ -51,7 +51,7 @@ export function Shelves({ books, query }: { books: Book[]; query: string }) {
       {filters && (
         <div className="filter-row">
           <label>
-            Title or author
+            Título ou autor
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -59,9 +59,9 @@ export function Shelves({ books, query }: { books: Book[]; query: string }) {
             />
           </label>
           <label>
-            Edition
+            Edição
             <select value={format} onChange={(e) => setFormat(e.target.value)}>
-              <option>All formats</option>
+              <option>Todos os formatos</option>
               {[
                 ...new Set(
                   books.flatMap((b) => b.editions.map((e) => e.format)),
@@ -77,7 +77,7 @@ export function Shelves({ books, query }: { books: Book[]; query: string }) {
               checked={stock}
               onChange={(e) => setStock(e.target.checked)}
             />{' '}
-            In stock only
+            Somente disponíveis
           </label>
         </div>
       )}
@@ -96,18 +96,18 @@ export function Shelves({ books, query }: { books: Book[]; query: string }) {
       </div>
       {!visible.length && (
         <div className="empty">
-          <h3>No books on this shelf</h3>
-          <p>Try another title, author or filter.</p>
+          <h3>Nenhum livro nesta estante</h3>
+          <p>Experimente outro título, autor ou filtro.</p>
           <button
             className="outline"
             onClick={() => {
-              setGenre('All books');
+              setGenre('Todos os livros');
               setSearch('');
-              setFormat('All formats');
+              setFormat('Todos os formatos');
               setStock(false);
             }}
           >
-            Clear filters
+            Limpar filtros
           </button>
         </div>
       )}

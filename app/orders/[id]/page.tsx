@@ -1,20 +1,20 @@
-import { notFound } from 'next/navigation';
-import { backend } from '../../../lib/server';
+'use client';
+import { useParams } from 'next/navigation';
+import { useRemote, RemoteState, api } from '../../../components/remote';
 import { OrderStatus } from '../../../components/order-status';
-export const metadata = {
-  title: 'Order status',
-  robots: { index: false, follow: false },
-};
-export default async function OrderPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const { response, data } = await backend().GET('/v1/orders/{id}', {
-    params: { path: { id } },
-  });
-  if ([400, 404].includes(response.status)) notFound();
-  if (!data) throw Error('Order unavailable.');
-  return <OrderStatus receipt={data} />;
+export default function OrderPage() {
+  const { id } = useParams<{ id: string }>();
+  const { data, error, retry } = useRemote(async () => {
+    const r = await api.GET('/v1/orders/{id}', { params: { path: { id } } });
+    if (!r.data)
+      throw Error(
+        r.error?.message ?? 'Entre na sua conta para consultar o pedido.',
+      );
+    return r.data;
+  }, id);
+  return data ? (
+    <OrderStatus receipt={data} />
+  ) : (
+    <RemoteState error={error} retry={retry} />
+  );
 }

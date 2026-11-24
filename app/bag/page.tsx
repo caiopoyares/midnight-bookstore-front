@@ -1,18 +1,24 @@
-import { backend } from '../../lib/server';
+'use client';
+import { useRemote, RemoteState, api } from '../../components/remote';
 import { Checkout } from '../../components/checkout';
-export const metadata = { title: 'Your bag' };
-export const dynamic = 'force-dynamic';
-export default async function BagPage() {
-  const source = backend();
-  const [shop, books] = await Promise.all([
-    source.GET('/v1/shop'),
-    source.GET('/v1/books'),
-  ]);
-  if (!shop.data || !books.data) throw Error('Shop unavailable.');
+export default function BagPage() {
+  const { data, error, retry } = useRemote(async () => {
+    const [shop, books] = await Promise.all([
+      api.GET('/v1/shop'),
+      api.GET('/v1/books'),
+    ]);
+    if (!shop.data || !books.data)
+      throw Error('A livraria está temporariamente indisponível.');
+    return { shop: shop.data, books: books.data };
+  }, 'bag');
   return (
     <div className="shell page">
-      <h1>Your bag</h1>
-      <Checkout shop={shop.data} books={books.data} />
+      <h1>Sua sacola</h1>
+      {data ? (
+        <Checkout {...data} />
+      ) : (
+        <RemoteState error={error} retry={retry} />
+      )}
     </div>
   );
 }

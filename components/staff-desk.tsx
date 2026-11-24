@@ -2,6 +2,17 @@
 import { useState, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { api, Dashboard, money } from '../lib/api';
+const status = (state: string) =>
+  ({
+    pending: 'Aguardando pagamento',
+    paid: 'Pago',
+    expired: 'Expirado',
+    shipped: 'Enviado',
+    queued: 'Na fila',
+    failed: 'Falhou',
+    sent: 'Enviado',
+    'demo-preview': 'Demonstração',
+  })[state] ?? state;
 export function StaffDesk() {
   const [key, setKey] = useState(''),
     [data, setData] = useState<Dashboard | null>(null),
@@ -12,7 +23,7 @@ export function StaffDesk() {
   async function refresh() {
     const reply = await api.GET('/v1/staff', { headers });
     if (!reply.data)
-      throw Error(reply.error?.message ?? 'Staff desk unavailable.');
+      throw Error(reply.error?.message ?? 'Painel da livraria indisponível.');
     setData(reply.data);
   }
   async function execute(action: () => Promise<void>, success = '') {
@@ -23,7 +34,11 @@ export function StaffDesk() {
       await action();
       tell(success);
     } catch (e) {
-      tell(e instanceof Error ? e.message : 'Request failed.');
+      tell(
+        e instanceof Error
+          ? e.message
+          : 'Não foi possível concluir a solicitação.',
+      );
     } finally {
       setBusy(false);
     }
@@ -49,7 +64,7 @@ export function StaffDesk() {
       await refresh();
       form.reset();
       attempt.current = { signature: '', id: '' };
-    }, 'Stock adjustment recorded.');
+    }, 'Ajuste de estoque registrado.');
   }
   return (
     <>
@@ -66,9 +81,9 @@ export function StaffDesk() {
             void execute(refresh);
           }}
         >
-          <h2>Bookseller access</h2>
+          <h2>Acesso da equipe</h2>
           <label>
-            Staff access key
+            Chave de acesso da equipe
             <input
               type="password"
               required
@@ -78,19 +93,19 @@ export function StaffDesk() {
             />
           </label>
           <button className="primary" disabled={busy}>
-            Open staff desk
+            Abrir painel
           </button>
         </form>
       ) : (
         <>
           <div className="staff-bar">
-            <span>Signed in as {data.actor}</span>
+            <span>Acesso de {data.actor}</span>
             <button
               className="outline"
               disabled={busy}
               onClick={() => execute(refresh)}
             >
-              Refresh
+              Atualizar
             </button>
             <button
               className="outline"
@@ -100,20 +115,20 @@ export function StaffDesk() {
                 tell('');
               }}
             >
-              Sign out
+              Sair
             </button>
           </div>
           <section className="staff-section">
-            <h2>Inventory</h2>
+            <h2>Estoque</h2>
             <div className="scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Edition</th>
+                    <th>Edição</th>
                     <th>SKU</th>
-                    <th>On hand</th>
-                    <th>Reserved</th>
-                    <th>Available</th>
+                    <th>Em estoque</th>
+                    <th>Reservados</th>
+                    <th>Disponíveis</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -134,9 +149,9 @@ export function StaffDesk() {
             </div>
           </section>
           <form className="panel adjustment" onSubmit={adjust}>
-            <h2>Adjust stock</h2>
+            <h2>Ajustar estoque</h2>
             <label>
-              Edition
+              Edição
               <select name="sku">
                 {data.stock.map((s) => (
                   <option key={s.sku}>{s.sku}</option>
@@ -144,7 +159,7 @@ export function StaffDesk() {
               </select>
             </label>
             <label>
-              Quantity change
+              Alteração de quantidade
               <input
                 type="number"
                 name="delta"
@@ -155,28 +170,31 @@ export function StaffDesk() {
               />
             </label>
             <label>
-              Reason
+              Motivo
               <input name="reason" maxLength={200} required />
             </label>
             <button className="primary" disabled={busy}>
-              Save adjustment
+              Salvar ajuste
             </button>
           </form>
           <section className="staff-section">
-            <h2>Orders</h2>
-            {!data.orders.length && <p>No orders yet.</p>}
+            <h2>Pedidos</h2>
+            {!data.orders.length && <p>Nenhum pedido ainda.</p>}
             {data.orders.map((o) => (
               <article className="order-card" key={o.id}>
                 <div>
                   <h3>
-                    {o.address.name} · {money(o.total)}
+                    {o.address.name} · {money(o.total, o.currency)}
                   </h3>
                   <small>{o.id}</small>
                   <p>
-                    {o.state} · {o.email}
+                    {status(o.state)} · {o.email}
                   </p>
                   {o.state === 'pending' && (
-                    <p>Hold due {new Date(o.expires_at).toLocaleString()}</p>
+                    <p>
+                      Reserva até{' '}
+                      {new Date(o.expires_at).toLocaleString('pt-BR')}
+                    </p>
                   )}
                   <p>
                     {o.lines
@@ -210,40 +228,40 @@ export function StaffDesk() {
                         });
                         if (!r.data) throw Error(r.error?.message);
                         await refresh();
-                      }, 'Order marked as shipped.')
+                      }, 'Pedido marcado como enviado.')
                     }
                   >
-                    Mark shipped
+                    Marcar como enviado
                   </button>
                 )}
               </article>
             ))}
           </section>
           <section className="staff-section">
-            <h2>Stock history</h2>
+            <h2>Histórico do estoque</h2>
             {data.log.length ? (
               data.log.map((l, i) => (
                 <p key={i}>
                   {l.sku} · {l.delta > 0 ? '+' : ''}
                   {l.delta} · {l.reason} · {l.actor} ·{' '}
-                  {new Date(l.created_at).toLocaleString()}
+                  {new Date(l.created_at).toLocaleString('pt-BR')}
                 </p>
               ))
             ) : (
-              <p>No adjustments yet.</p>
+              <p>Nenhum ajuste ainda.</p>
             )}
           </section>
           <section className="staff-section">
-            <h2>Email jobs awaiting delivery</h2>
+            <h2>E-mails aguardando envio</h2>
             {data.jobs.length ? (
               data.jobs.map((j) => (
                 <p key={j.order_id}>
-                  {j.order_id.slice(0, 8)} · {j.state} · {j.attempts} attempts{' '}
-                  {j.last_error}
+                  {j.order_id.slice(0, 8)} · {status(j.state)} · {j.attempts}{' '}
+                  tentativas {j.last_error}
                 </p>
               ))
             ) : (
-              <p>No outstanding email jobs.</p>
+              <p>Nenhum e-mail pendente.</p>
             )}
           </section>
         </>

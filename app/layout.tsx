@@ -5,28 +5,32 @@ import '@fontsource/spectral/latin-500.css';
 import '@fontsource/spectral/latin-500-italic.css';
 import '@fontsource/spectral/latin-600.css';
 import './globals.css';
+import { AccountProvider } from '../components/account';
 import { BagProvider } from '../components/bag';
 import { Header, Footer } from '../components/frame';
 export const metadata: Metadata = {
   title: {
-    default: 'Nightjar Books · Horror bookshop',
-    template: '%s · Nightjar Books',
+    default: 'Midnight Books · Livraria de terror',
+    template: '%s · Midnight Books',
   },
-  description: 'An independent bookshop for gothic, folk and cosmic horror.',
+  description:
+    'Uma livraria independente de terror gótico, folclórico e cósmico.',
   referrer: 'no-referrer',
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body>
         <a className="skip" href="#main">
-          Skip to content
+          Ir para o conteúdo
         </a>
-        <BagProvider>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-        </BagProvider>
+        <AccountProvider>
+          <BagProvider>
+            <Header />
+            <main id="main">{children}</main>
+            <Footer />
+          </BagProvider>
+        </AccountProvider>
       </body>
     </html>
   );

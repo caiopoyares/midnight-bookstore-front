@@ -70,7 +70,7 @@ export function Wordmark() {
           />
         </svg>
       </span>
-      Nightjar <em>Books</em>
+      Midnight <em>Books</em>
     </span>
   );
 }

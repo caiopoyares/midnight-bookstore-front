@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Book, money } from '../lib/api';
 import { useBag } from './bag';
 import { Icon } from './icons';
-export function EditionPicker({ book }: { book: Book }) {
+export function EdiçãoPicker({ book }: { book: Book }) {
   const { add, lines, ready } = useBag(),
     [sku, select] = useState(
       book.editions.find((x) => x.available)?.sku ?? book.editions[0].sku,
@@ -15,7 +15,7 @@ export function EditionPicker({ book }: { book: Book }) {
   return (
     <div className="purchase">
       <fieldset>
-        <legend>Choose an edition</legend>
+        <legend>Escolha uma edição</legend>
         <div className="editions">
           {book.editions.map((e) => (
             <label key={e.sku} className={sku === e.sku ? 'chosen' : ''}>
@@ -37,10 +37,10 @@ export function EditionPicker({ book }: { book: Book }) {
         <strong>{money(edition.price)}</strong>
         <span>
           {edition.available === 0
-            ? 'Sold out'
+            ? 'Esgotado'
             : edition.available === 1
-              ? 'Last copy'
-              : 'In stock'}
+              ? 'Último exemplar'
+              : 'Disponível'}
         </span>
       </div>
       <button
@@ -52,13 +52,13 @@ export function EditionPicker({ book }: { book: Book }) {
         }}
       >
         <Icon name="bag" size={18} />
-        {edition.available === 0 ? 'Sold out' : 'Add to bag'}
+        {edition.available === 0 ? 'Esgotado' : 'Adicionar à sacola'}
       </button>
       <div className="inline-status" aria-live="polite">
-        {added ? 'Added to your bag. ' : ''}
+        {added ? 'Adicionado à sua sacola. ' : ''}
         {inBag > 0 && (
           <Link className="text-link" href="/bag">
-            View bag ({inBag})
+            Ver sacola ({inBag})
           </Link>
         )}
       </div>

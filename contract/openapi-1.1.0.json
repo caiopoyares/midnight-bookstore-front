@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Nightjar Books",
-    "version": "1.0.0"
+    "title": "Midnight Books",
+    "version": "1.1.0"
   },
   "paths": {
     "/v1/books": {
@@ -143,7 +143,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "customerSession": []
+          }
+        ]
       }
     },
     "/v1/orders/{id}": {
@@ -180,7 +185,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "customerSession": []
+          }
+        ]
       }
     },
     "/v1/orders/{id}/demo-pay": {
@@ -217,7 +227,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "customerSession": []
+          }
+        ]
       }
     },
     "/v1/orders/{id}/resume": {
@@ -254,7 +269,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "customerSession": []
+          }
+        ]
       }
     },
     "/v1/staff": {
@@ -493,6 +513,162 @@
           }
         }
       }
+    },
+    "/v1/auth/link": {
+      "post": {
+        "operationId": "authlink",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/verify": {
+      "post": {
+        "operationId": "authverify",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/me": {
+      "get": {
+        "operationId": "authme",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "authlogout",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": []
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -500,6 +676,11 @@
       "staffKey": {
         "type": "http",
         "scheme": "bearer"
+      },
+      "customerSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "midnight_session"
       }
     },
     "schemas": {

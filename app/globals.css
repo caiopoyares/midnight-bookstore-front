@@ -885,3 +885,16 @@ footer {
     animation: none !important;
   }
 }
+
+@media(min-width:1000px){
+ .book-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:32px 24px}
+ .book-card .jacket-type strong{font-size:clamp(1.65rem,2.55vw,2.7rem)}
+ .book-card h3{font-size:1.35rem}
+}
+
+.account-button{font-size:.85rem;white-space:nowrap}
+.login h1{font-size:2.5rem}
+@media(min-width:701px){
+ .hero-copy{max-width:650px}
+ .hero h1{font-size:clamp(3.6rem,5.3vw,5.2rem)}
+}

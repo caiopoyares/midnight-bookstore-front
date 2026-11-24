@@ -1,25 +1,39 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAccount } from './account';
 import { useBag } from './bag';
 import { Icon, Wordmark } from './icons';
 export function Header() {
+  const { user, logout } = useAccount();
   const { lines } = useBag(),
     [search, setSearch] = useState(false);
   return (
     <header className="header">
       <div className="bar shell">
-        <Link href="/" aria-label="Nightjar Books home">
+        <Link href="/" aria-label="Página inicial da Midnight Books">
           <Wordmark />
         </Link>
-        <nav aria-label="Main navigation">
-          <Link href="/#shelves">Bookshelves</Link>
-          <Link href="/books/hill-house">Bookseller’s pick</Link>
+        <nav aria-label="Navegação principal">
+          <Link href="/#shelves">Estantes</Link>
+          <Link href="/books/hill-house">Escolha da livraria</Link>
         </nav>
         <div className="tools">
+          {user ? (
+            <button
+              className="icon-button account-button"
+              onClick={() => void logout()}
+            >
+              Sair
+            </button>
+          ) : (
+            <Link className="account-button" href="/login">
+              Entrar
+            </Link>
+          )}
           <button
             className="icon-button"
-            aria-label="Search books"
+            aria-label="Buscar livros"
             aria-expanded={search}
             onClick={() => setSearch(!search)}
           >
@@ -27,7 +41,7 @@ export function Header() {
           </button>
           <Link className="bag-link" href="/bag">
             <Icon name="bag" />
-            <span>Bag</span>
+            <span>Sacola</span>
             <span className="count">
               {lines.reduce((a, x) => a + x.quantity, 0)}
             </span>
@@ -36,14 +50,14 @@ export function Header() {
       </div>
       {search && (
         <form className="header-search shell" action="/#shelves" method="get">
-          <label htmlFor="site-search">Search the shelves</label>
+          <label htmlFor="site-search">Buscar nas estantes</label>
           <input
             id="site-search"
             name="q"
             autoFocus
-            placeholder="Title or author"
+            placeholder="Título ou autor"
           />
-          <button className="primary">Search</button>
+          <button className="primary">Buscar</button>
         </form>
       )}
     </header>
@@ -56,8 +70,8 @@ export function Footer() {
         <Link href="/">
           <Wordmark />
         </Link>
-        <span>Independent horror booksellers</span>
-        <Link href="/staff">Staff desk</Link>
+        <span>Livraria independente de terror</span>
+        <Link href="/staff">Painel da livraria</Link>
       </div>
     </footer>
   );

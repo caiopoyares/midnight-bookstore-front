@@ -2,10 +2,10 @@
 export default function ErrorPage({ reset }: { reset: () => void }) {
   return (
     <div className="shell page">
-      <h1>The shop is temporarily unavailable</h1>
-      <p>We couldn’t reach the catalog. Please try again in a moment.</p>
+      <h1>A livraria está temporariamente indisponível</h1>
+      <p>Não foi possível carregar o catálogo. Tente novamente em instantes.</p>
       <button className="primary" onClick={reset}>
-        Try again
+        Tentar novamente
       </button>
     </div>
   );

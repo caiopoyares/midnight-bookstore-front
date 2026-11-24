@@ -52,60 +52,61 @@ export function OrderStatus({ receipt }: { receipt: Receipt }) {
         location.assign(data.url);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Payment unavailable.');
+      setError(e instanceof Error ? e.message : 'Pagamento indisponível.');
     } finally {
       setBusy(false);
     }
   }
   const headings = {
-    pending: order.mode === 'demo' ? 'Demo checkout' : 'Awaiting payment',
-    paid: 'Order confirmed',
-    expired: 'Reservation expired',
-    shipped: 'Your books have shipped',
+    pending:
+      order.mode === 'demo' ? 'Pagamento de teste' : 'Aguardando pagamento',
+    paid: 'Pedido confirmado',
+    expired: 'Reserva expirada',
+    shipped: 'Seus livros foram enviados',
   };
   return (
     <div className="shell page receipt">
-      <span className="smallcap accent">Order {order.id.slice(0, 8)}</span>
+      <span className="smallcap accent">Pedido {order.id.slice(0, 8)}</span>
       <h1 aria-live="polite">{headings[order.state]}</h1>
       <p>
         {order.state === 'pending'
           ? order.mode === 'demo'
-            ? 'This is a local test purchase. No money will be charged.'
-            : 'Your copies are reserved while payment is confirmed.'
+            ? 'Esta é uma compra de demonstração. O pagamento é simulado.'
+            : 'Seus exemplares estão reservados enquanto o pagamento é confirmado.'
           : order.state === 'expired'
-            ? 'Your copies have been released. You can return to the shelves to check availability.'
+            ? 'Seus exemplares foram liberados. Consulte a disponibilidade nas estantes.'
             : order.state === 'paid'
-              ? 'Your books are reserved for dispatch. Keep this private link to check their status.'
-              : 'The bookseller has marked your order as shipped.'}
+              ? 'Seus livros estão separados para envio. Acompanhe o pedido pela sua conta.'
+              : 'A livraria marcou seu pedido como enviado.'}
       </p>
       <div className="panel">
-        <h2>Order summary</h2>
+        <h2>Resumo do pedido</h2>
         {order.lines.map((l) => (
           <p className="summary-row" key={l.sku}>
             <span>
               {l.quantity} × {l.title}
               <small>{l.format}</small>
             </span>
-            <span>{money(l.price * l.quantity)}</span>
+            <span>{money(l.price * l.quantity, order.currency)}</span>
           </p>
         ))}
         <div className="totals">
           <p>
-            <span>Shipping</span>
-            {money(order.shipping)}
+            <span>Frete</span>
+            {money(order.shipping, order.currency)}
           </p>
           <p>
             <b>Total</b>
-            <b>{money(order.total)}</b>
+            <b>{money(order.total, order.currency)}</b>
           </p>
         </div>
         {order.state === 'pending' && (
           <button className="primary" onClick={pay} disabled={busy}>
             {busy
-              ? 'Processing…'
+              ? 'Processando…'
               : order.mode === 'demo'
-                ? 'Complete demo payment'
-                : 'Open payment'}
+                ? 'Concluir pagamento de teste'
+                : 'Abrir pagamento'}
           </button>
         )}
         {error && (
@@ -115,7 +116,7 @@ export function OrderStatus({ receipt }: { receipt: Receipt }) {
         )}
       </div>
       <Link href="/#shelves" className="text-link">
-        Back to the shelves
+        Voltar às estantes
       </Link>
     </div>
   );
