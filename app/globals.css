@@ -190,10 +190,10 @@ small {
 }
 .count {
   position: absolute;
-  bottom: calc(100% - 1px);
-  left: 50%;
+  bottom: calc(100% - 5px);
+  left: calc(50% - 4px);
   transform: translateX(-50%);
-  color: #ff6b64;
+  color: #000;
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
@@ -201,9 +201,9 @@ small {
   min-height: 1.4rem;
   aspect-ratio: 1;
   padding: 2px;
-  border: 1px solid currentColor;
+  border: 1px solid #ff6b64;
   border-radius: 50%;
-  background: var(--bg);
+  background: #ff6b64;
   display: grid;
   place-items: center;
   text-align: center;

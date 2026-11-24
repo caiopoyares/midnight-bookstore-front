@@ -55,14 +55,14 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
   await expect(page.locator('.bag-link .count')).toHaveText('1');
   const badge = await page.locator('.bag-link .count').boundingBox();
   const bag = await page.locator('.bag-link svg').boundingBox();
-  expect(badge!.y + badge!.height).toBeLessThanOrEqual(bag!.y + 2);
+  expect(badge!.y + badge!.height).toBeLessThanOrEqual(bag!.y + 6);
   expect(Math.abs(badge!.width - badge!.height)).toBeLessThan(1);
   await expect(page.locator('.bag-link .count')).toHaveCSS(
     'color',
-    'rgb(255, 107, 100)',
+    'rgb(0, 0, 0)',
   );
   await expect(page.locator('.bag-link .count')).toHaveCSS(
-    'border-top-color',
+    'background-color',
     'rgb(255, 107, 100)',
   );
   await expect(page.locator('.bag-link .count')).toHaveCSS(
