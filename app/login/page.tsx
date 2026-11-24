@@ -7,19 +7,22 @@ export default function Login() {
     { refresh, user } = useAccount();
   const [email, setEmail] = useState(''),
     [token, setToken] = useState(''),
+    [destination, setDestination] = useState('/bag'),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState(''),
     [inboxUrl, setInboxUrl] = useState(''),
     [error, setError] = useState('');
   useEffect(() => {
     function readToken() {
+      const next = new URLSearchParams(location.search).get('next');
+      setDestination(next === '/purchases' ? '/purchases' : '/bag');
       const value = new URLSearchParams(location.hash.slice(1)).get('token');
       if (value) {
         setToken(value);
         setMessage('');
         setInboxUrl('');
         setError('');
-        history.replaceState(null, '', '/login');
+        history.replaceState(null, '', '/login' + location.search);
       }
     }
     readToken();
@@ -32,7 +35,10 @@ export default function Login() {
     setMessage('');
     setInboxUrl('');
     try {
-      const result = await authRequest('link', { email });
+      const result = await authRequest('link', {
+        email,
+        returnTo: destination,
+      });
       setMessage(result.message);
       setInboxUrl(result.inboxUrl ?? '');
     } catch (e) {
@@ -48,7 +54,7 @@ export default function Login() {
       await authRequest('verify', { token });
       setToken('');
       await refresh();
-      router.replace('/bag');
+      router.replace(destination);
     } catch (e) {
       setError((e as Error).message);
       setToken('');
@@ -61,7 +67,7 @@ export default function Login() {
       <div className="panel form login">
         <h1>Entre na Midnight Books</h1>
         <p>
-          Receba um link de acesso por e-mail para continuar sua compra. Sua
+          Receba um link por e-mail para comprar e acompanhar seus pedidos. Sua
           sacola será preservada.
         </p>
         {token ? (
@@ -71,8 +77,13 @@ export default function Login() {
         ) : user ? (
           <>
             <p>Você entrou como {user.email}.</p>
-            <button className="primary" onClick={() => router.push('/bag')}>
-              Voltar à sacola
+            <button
+              className="primary"
+              onClick={() => router.push(destination)}
+            >
+              {destination === '/purchases'
+                ? 'Ver minhas compras'
+                : 'Voltar à sacola'}
             </button>
           </>
         ) : (

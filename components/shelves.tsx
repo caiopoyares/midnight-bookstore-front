@@ -1,8 +1,7 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
-import { Book, money } from '../lib/api';
-import { Cover } from './cover';
+import { Book } from '../lib/api';
+import { BookCard } from './book-card';
 import { Icon } from './icons';
 export function Shelves({ books, query }: { books: Book[]; query: string }) {
   const [genre, setGenre] = useState('Todos os livros'),
@@ -82,16 +81,12 @@ export function Shelves({ books, query }: { books: Book[]; query: string }) {
         </div>
       )}
       <div className="book-grid">
-        {visible.map((b) => (
-          <Link className="book-card" href={'/books/' + b.slug} key={b.slug}>
-            <Cover book={b} />
-            <span className="card-genre">{b.genre}</span>
-            <h3>{b.title}</h3>
-            <span className="author">{b.author}</span>
-            <strong className="price">
-              {money(Math.min(...b.editions.map((e) => e.price)))}
-            </strong>
-          </Link>
+        {visible.map((book) => (
+          <BookCard
+            key={book.slug + '/' + format}
+            book={book}
+            format={format}
+          />
         ))}
       </div>
       {!visible.length && (

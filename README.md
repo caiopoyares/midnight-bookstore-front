@@ -13,7 +13,9 @@ docker compose up --build -d --wait
 
 Acesse http://localhost:3000. Para entrar, solicite um link por e-mail e abra a mensagem recebida na caixa de desenvolvimento em http://localhost:8025. A sacola é preservada durante o login. A API exige autenticação antes de reservar os livros e iniciar a compra.
 
-O catálogo demonstrativo contém 12 títulos e 14 edições com preços, estoque e capas conceituais. O desktop apresenta cinco livros por linha. Os preços são exibidos em reais e as entregas estão configuradas para o Brasil.
+O catálogo demonstrativo contém 12 títulos e 14 edições com preços, estoque e capas conceituais. O desktop largo apresenta seis livros por linha, com seleção de edição e botão para adicionar à sacola. Os preços são exibidos em reais e as entregas estão configuradas para o Brasil.
+
+A página **Minhas compras** reúne os pedidos da conta autenticada, com data, situação, total e acesso ao pedido. Pagamentos pendentes podem ser retomados por essa página.
 
 ## Desenvolver e testar
 

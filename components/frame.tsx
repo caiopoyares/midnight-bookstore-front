@@ -19,6 +19,9 @@ export function Header() {
           <Link href="/books/hill-house">Escolha da livraria</Link>
         </nav>
         <div className="tools">
+          <Link className="account-button purchases-link" href="/purchases">
+            Minhas compras
+          </Link>
           {user ? (
             <button
               className="icon-button account-button"

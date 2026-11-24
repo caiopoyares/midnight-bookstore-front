@@ -22,7 +22,27 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
       .locator('.book-card .jacket')
       .first()
       .evaluate((el) => el.getBoundingClientRect().width),
-  ).toBeLessThan(240);
+  ).toBeLessThan(195);
+  const carmilla = page
+    .locator('.book-card')
+    .filter({
+      has: page.getByRole('heading', { name: 'Carmilla', exact: true }),
+    });
+  await carmilla
+    .getByRole('button', { name: 'Adicionar Carmilla à sacola' })
+    .click();
+  await expect(page).toHaveURL('http://localhost:3000/');
+  await expect(
+    carmilla.getByRole('link', { name: 'Ver sacola (1)' }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem('nightjar.bag.v1') ?? '[]').find(
+          (line: any) => line.sku === 'CARM-HC',
+        )?.quantity,
+    ),
+  ).toBe(1);
   await page.goto('/books/frankenstein');
   await expect(
     page.getByRole('radio', { name: 'Paperback', exact: true }),
@@ -86,9 +106,7 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   const message = await (
     await request.get('http://localhost:8025/api/v1/message/' + mail.ID)
   ).json();
-  const link = message.Text.match(
-    /http:\/\/localhost:3000\/login#token=[a-f0-9]+/,
-  )[0];
+  const link = message.Text.match(/http:\/\/localhost:3000\/login[^\s]+/)[0];
   await page.goto(link);
   await page.getByRole('button', { name: 'Confirmar acesso' }).click();
   await expect(page).toHaveURL(/\/bag$/);
@@ -116,6 +134,17 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
     page.getByRole('heading', { name: 'Pedido confirmado' }),
   ).toBeVisible();
   const receipt = page.url();
+  await page.getByRole('link', { name: 'Minhas compras', exact: true }).click();
+  await expect(page).toHaveURL(/\/purchases$/);
+  const savedOrder = page
+    .locator('.purchase-history-card')
+    .filter({
+      has: page.locator('a[href="' + new URL(receipt).pathname + '"]'),
+    });
+  await expect(savedOrder).toContainText('Carmilla');
+  await expect(savedOrder).toContainText('Pago');
+  await savedOrder.getByRole('link', { name: 'Ver pedido' }).click();
+  await expect(page).toHaveURL(receipt);
   await page.getByRole('button', { name: 'Sair', exact: true }).click();
   await page.goto(receipt);
   await expect(
@@ -124,6 +153,30 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   await page.goto(link);
   await page.getByRole('button', { name: 'Confirmar acesso' }).click();
   await expect(page.locator('p[role=alert]')).toContainText('já foi usado');
+  await page.goto('/purchases');
+  await page.getByRole('link', { name: 'Entrar na minha conta' }).click();
+  await page.getByRole('textbox', { name: 'E-mail', exact: true }).fill(email);
+  await page.getByRole('button', { name: 'Enviar link de acesso' }).click();
+  await expect(page.getByRole('status')).toContainText(
+    'caixa de e-mail de desenvolvimento',
+  );
+  const inbox = await (
+    await request.get('http://localhost:8025/api/v1/messages')
+  ).json();
+  const latest = inbox.messages.find((m: any) =>
+    m.To.some((to: any) => to.Address === email),
+  );
+  const delivered = await (
+    await request.get('http://localhost:8025/api/v1/message/' + latest.ID)
+  ).json();
+  await page.goto(
+    delivered.Text.match(/http:\/\/localhost:3000\/login[^\s]+/)[0],
+  );
+  await page.getByRole('button', { name: 'Confirmar acesso' }).click();
+  await expect(page).toHaveURL(/\/purchases$/);
+  await expect(
+    page.getByRole('heading', { name: 'Minhas compras', exact: true }),
+  ).toBeVisible();
 });
 test('staff receives inventory with an audit entry', async ({ page }) => {
   const settings = parseEnv(

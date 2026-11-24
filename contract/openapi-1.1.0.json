@@ -551,6 +551,13 @@
                 "properties": {
                   "email": {
                     "type": "string"
+                  },
+                  "returnTo": {
+                    "type": "string",
+                    "enum": [
+                      "/bag",
+                      "/purchases"
+                    ]
                   }
                 },
                 "required": [
@@ -669,6 +676,138 @@
                 "type": "object",
                 "properties": {},
                 "required": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orders": {
+      "get": {
+        "operationId": "listCustomerOrders",
+        "security": [
+          {
+            "customerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pedidos do cliente autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orders": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "paid",
+                              "shipped",
+                              "expired"
+                            ]
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "total": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "shipped_at": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "lines": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sku": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "format": {
+                                  "type": "string"
+                                },
+                                "quantity": {
+                                  "type": "integer"
+                                },
+                                "price": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "sku",
+                                "title",
+                                "format",
+                                "quantity",
+                                "price"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "state",
+                          "currency",
+                          "total",
+                          "created_at",
+                          "shipped_at",
+                          "lines"
+                        ]
+                      }
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "pageSize": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "orders",
+                    "page",
+                    "pageSize",
+                    "total"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Solicita\u00e7\u00e3o inv\u00e1lida ou sess\u00e3o ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }

@@ -898,3 +898,138 @@ footer {
  .hero-copy{max-width:650px}
  .hero h1{font-size:clamp(3.6rem,5.3vw,5.2rem)}
 }
+
+.book-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.book-card-detail {
+  display: block;
+}
+.card-purchase {
+  margin-top: auto;
+  padding-top: 12px;
+}
+.card-purchase label,
+.card-format {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.card-purchase select {
+  width: 100%;
+  margin-top: 4px;
+  min-height: 40px;
+  font-size: 0.875rem;
+}
+.card-format {
+  display: flex;
+  align-items: flex-end;
+  min-height: 66px;
+}
+.card-purchase .price {
+  margin: 8px 0 10px;
+}
+.card-purchase .primary {
+  width: 100%;
+  padding-inline: 6px;
+  font-size: 0.875rem;
+  gap: 6px;
+}
+.card-feedback {
+  min-height: 25px;
+  padding-top: 4px;
+  font-size: 0.875rem;
+}
+.purchases-page {
+  max-width: 1000px;
+}
+.purchase-count {
+  margin-bottom: 18px;
+}
+.purchase-list {
+  display: grid;
+  gap: 18px;
+}
+.purchase-heading,
+.purchase-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.purchase-history-card h2 {
+  font-size: 1.65rem;
+}
+.purchase-history-card time {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.purchase-history-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0;
+}
+.purchase-history-card li + li {
+  margin-top: 10px;
+}
+.purchase-total {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.order-state {
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+.purchase-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  font-size: 0.9rem;
+}
+@media (min-width: 1200px) {
+  .book-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 30px 22px;
+  }
+  .book-card .jacket-type strong {
+    font-size: clamp(1.45rem, 2.1vw, 2.2rem);
+  }
+  .book-card h3 {
+    font-size: 1.25rem;
+  }
+}
+@media (max-width: 700px) {
+  .bar {
+    flex-wrap: wrap;
+    padding-block: 10px;
+    row-gap: 8px;
+  }
+  .tools {
+    flex-wrap: wrap;
+  }
+  .purchases-link {
+    font-size: 0.8rem;
+  }
+  .card-purchase .primary svg {
+    display: none;
+  }
+  .purchase-heading {
+    align-items: start;
+  }
+}
+@media (max-width: 480px) {
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+  .bar > .tools {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 16px;
+  }
+}
