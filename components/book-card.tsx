@@ -60,12 +60,12 @@ export function BookCard({ book, format }: { book: Book; format: string }) {
               ? 'Limite na sacola'
               : 'Adicionar à sacola'}
         </button>
-        <div className="card-feedback" aria-live="polite">
-          {count > 0 && (
-            <Link className="text-link" href="/bag">
-              Ver sacola ({count})
-            </Link>
-          )}
+        <div className="sr-only" role="status">
+          {count > 0
+            ? count +
+              ' ' +
+              (count === 1 ? 'exemplar na sacola' : 'exemplares na sacola')
+            : ''}
         </div>
       </div>
     </article>

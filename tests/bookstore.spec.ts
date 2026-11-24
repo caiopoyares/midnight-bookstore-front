@@ -23,18 +23,22 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
       .first()
       .evaluate((el) => el.getBoundingClientRect().width),
   ).toBeLessThan(195);
-  const carmilla = page
-    .locator('.book-card')
-    .filter({
-      has: page.getByRole('heading', { name: 'Carmilla', exact: true }),
-    });
+  const carmilla = page.locator('.book-card').filter({
+    has: page.getByRole('heading', { name: 'Carmilla', exact: true }),
+  });
   await carmilla
     .getByRole('button', { name: 'Adicionar Carmilla à sacola' })
     .click();
   await expect(page).toHaveURL('http://localhost:3000/');
-  await expect(
-    carmilla.getByRole('link', { name: 'Ver sacola (1)' }),
-  ).toBeVisible();
+  await expect(page.locator('.bag-link .count')).toHaveText('1');
+  await expect(page.getByRole('link', { name: /Ver sacola/ })).toHaveCount(0);
+  const badge = await page.locator('.bag-link .count').boundingBox();
+  const bag = await page.locator('.bag-link svg').boundingBox();
+  expect(badge!.y + badge!.height).toBeLessThanOrEqual(bag!.y + 2);
+  await expect(page.locator('.bag-link .count')).toHaveCSS(
+    'color',
+    'rgb(255, 107, 100)',
+  );
   expect(
     await page.evaluate(
       () =>
@@ -43,6 +47,26 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
         )?.quantity,
     ),
   ).toBe(1);
+  await carmilla.scrollIntoViewIfNeeded();
+  const price = await carmilla.locator('.price').boundingBox();
+  await page.mouse.click(
+    price!.x + price!.width / 2,
+    price!.y + price!.height / 2,
+  );
+  await expect(page).toHaveURL(/\/books\/carmilla$/);
+  await page.goto('/');
+  const frankenstein = page
+    .locator('.book-card')
+    .filter({
+      has: page.getByRole('heading', { name: 'Frankenstein', exact: true }),
+    });
+  await frankenstein
+    .getByRole('combobox', { name: 'Edição', exact: true })
+    .selectOption('FRAN-HC');
+  await expect(
+    frankenstein.getByRole('combobox', { name: 'Edição', exact: true }),
+  ).toHaveValue('FRAN-HC');
+  await expect(page).toHaveURL('http://localhost:3000/');
   await page.goto('/books/frankenstein');
   await expect(
     page.getByRole('radio', { name: 'Paperback', exact: true }),
@@ -77,7 +101,15 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
     page.locator('section[aria-labelledby="book-synopsis"]'),
   ).toContainText('Uma visitante fascinante');
   await page.getByRole('button', { name: 'Adicionar à sacola' }).click();
-  await page.getByRole('link', { name: 'Ver sacola (1)' }).click();
+  await expect(page.getByRole('link', { name: /Ver sacola/ })).toHaveCount(0);
+  await expect(
+    page.locator('section[aria-labelledby="book-synopsis"] p'),
+  ).toHaveCount(2);
+  const synopsis = await page
+    .locator('section[aria-labelledby="book-synopsis"]')
+    .textContent();
+  expect(synopsis!.split(/\s+/).length).toBeGreaterThan(120);
+  await page.getByRole('link', { name: 'Sacola, 1 item', exact: true }).click();
   await expect(
     page.getByRole('link', { name: 'Entrar na minha conta' }),
   ).toBeVisible();
@@ -136,11 +168,9 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   const receipt = page.url();
   await page.getByRole('link', { name: 'Minhas compras', exact: true }).click();
   await expect(page).toHaveURL(/\/purchases$/);
-  const savedOrder = page
-    .locator('.purchase-history-card')
-    .filter({
-      has: page.locator('a[href="' + new URL(receipt).pathname + '"]'),
-    });
+  const savedOrder = page.locator('.purchase-history-card').filter({
+    has: page.locator('a[href="' + new URL(receipt).pathname + '"]'),
+  });
   await expect(savedOrder).toContainText('Carmilla');
   await expect(savedOrder).toContainText('Pago');
   await savedOrder.getByRole('link', { name: 'Ver pedido' }).click();

@@ -36,7 +36,9 @@ export default function BookPage() {
             <h2 id="book-synopsis" style={{ fontSize: '1.55rem' }}>
               Sinopse
             </h2>
-            <p>{book.synopsis}</p>
+            {book.synopsis.split(/\n\s*\n/).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </section>
           <EdiçãoPicker book={book} />
           <aside className="staff-note">

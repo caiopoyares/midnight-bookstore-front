@@ -8,6 +8,7 @@ export function Header() {
   const { user, logout } = useAccount();
   const { lines } = useBag(),
     [search, setSearch] = useState(false);
+  const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
   return (
     <header className="header">
       <div className="bar shell">
@@ -42,12 +43,23 @@ export function Header() {
           >
             <Icon name={search ? 'close' : 'search'} />
           </button>
-          <Link className="bag-link" href="/bag">
-            <Icon name="bag" />
-            <span>Sacola</span>
-            <span className="count">
-              {lines.reduce((a, x) => a + x.quantity, 0)}
+          <Link
+            className="bag-link"
+            href="/bag"
+            aria-label={
+              'Sacola, ' +
+              itemCount +
+              ' ' +
+              (itemCount === 1 ? 'item' : 'itens')
+            }
+          >
+            <span className="bag-icon">
+              <Icon name="bag" />
+              <span className="count" aria-hidden="true">
+                {itemCount}
+              </span>
             </span>
+            <span className="bag-label">Sacola</span>
           </Link>
         </div>
       </div>

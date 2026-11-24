@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 import { Book, money } from '../lib/api';
 import { useBag } from './bag';
 import { Icon } from './icons';
@@ -56,11 +55,6 @@ export function EdiçãoPicker({ book }: { book: Book }) {
       </button>
       <div className="inline-status" aria-live="polite">
         {added ? 'Adicionado à sua sacola. ' : ''}
-        {inBag > 0 && (
-          <Link className="text-link" href="/bag">
-            Ver sacola ({inBag})
-          </Link>
-        )}
       </div>
     </div>
   );

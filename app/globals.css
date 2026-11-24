@@ -184,15 +184,21 @@ small {
 .bag-link {
   gap: 8px;
 }
+.bag-icon {
+  position: relative;
+  display: inline-flex;
+}
 .count {
-  font-size: 0.76rem;
+  position: absolute;
+  bottom: calc(100% - 1px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff6b64;
+  font-size: 0.875rem;
   font-weight: 600;
-  min-width: 21px;
-  height: 21px;
-  border-radius: 100%;
-  border: 1px solid #5d5950;
-  display: grid;
-  place-items: center;
+  line-height: 1;
+  min-width: 1.25rem;
+  text-align: center;
 }
 .header-search {
   display: flex;
@@ -861,7 +867,7 @@ footer {
   .bag-link {
     gap: 5px;
   }
-  .bar .bag-link > span:not(.count) {
+  .bar .bag-link > .bag-label {
     display: none;
   }
   .order-card {
@@ -900,6 +906,9 @@ footer {
 }
 
 .book-card {
+  position: relative;
+  isolation: isolate;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -936,11 +945,7 @@ footer {
   font-size: 0.875rem;
   gap: 6px;
 }
-.card-feedback {
-  min-height: 25px;
-  padding-top: 4px;
-  font-size: 0.875rem;
-}
+
 .purchases-page {
   max-width: 1000px;
 }
@@ -1032,4 +1037,30 @@ footer {
     width: 100%;
     gap: 16px;
   }
+}
+
+.book-card-detail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.card-purchase label,
+.card-purchase select,
+.card-purchase button {
+  position: relative;
+  z-index: 2;
+}
+.book-card:has(.book-card-detail:focus-visible) {
+  outline: 2px solid #ffab91;
+  outline-offset: 4px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
