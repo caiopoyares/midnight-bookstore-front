@@ -367,7 +367,6 @@ a.primary:hover {
 }
 .jacket-type span {
   display: block;
-  letter-spacing: 0.14em;
   text-transform: uppercase;
   font: 600 clamp(0.65rem, 1vw, 0.87rem)/1.4 var(--serif);
   letter-spacing: 0.12em;
@@ -804,9 +803,6 @@ footer {
   }
   .hero-copy {
     max-width: 100%;
-  }
-  .hero-copy p {
-    max-width: 80%;
   }
   .hero p {
     font-size: 0.92rem;

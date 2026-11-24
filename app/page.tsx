@@ -4,7 +4,6 @@ import { useRemote, RemoteState, api } from '../components/remote';
 import { useEffect, useState } from 'react';
 import { Shelves } from '../components/shelves';
 import { Icon } from '../components/icons';
-export const dynamic = 'force-dynamic';
 export default function Home() {
   const [query, setQuery] = useState('');
   useEffect(() => {

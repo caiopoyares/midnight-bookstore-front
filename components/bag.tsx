@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Book } from '../lib/api';
-export type BagLine = {
+type BagLine = {
   sku: string;
   slug: string;
   title: string;

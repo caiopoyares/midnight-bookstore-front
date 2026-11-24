@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-export type Customer = { id: string; email: string };
+type Customer = { id: string; email: string };
 const base = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4100';
 export async function authRequest(path: string, body?: unknown) {
   const response = await fetch(base + '/v1/auth/' + path, {

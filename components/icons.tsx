@@ -2,7 +2,7 @@ export function Icon({
   name,
   size = 20,
 }: {
-  name: 'search' | 'bag' | 'filter' | 'close' | 'book' | 'moon';
+  name: 'search' | 'bag' | 'filter' | 'close' | 'book';
   size?: number;
 }) {
   const paths = {
@@ -32,7 +32,6 @@ export function Icon({
         <path d="M12 9v12" />
       </>
     ),
-    moon: <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4a8.5 8.5 0 1 0 11.5 11.5Z" />,
   };
   return (
     <svg
