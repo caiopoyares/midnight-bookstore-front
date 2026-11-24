@@ -194,10 +194,18 @@ small {
   left: 50%;
   transform: translateX(-50%);
   color: #ff6b64;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
-  min-width: 1.25rem;
+  min-width: 1.4rem;
+  min-height: 1.4rem;
+  aspect-ratio: 1;
+  padding: 2px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
   text-align: center;
 }
 .header-search {
@@ -939,12 +947,6 @@ footer {
 .card-purchase .price {
   margin: 8px 0 10px;
 }
-.card-purchase .primary {
-  width: 100%;
-  padding-inline: 6px;
-  font-size: 0.875rem;
-  gap: 6px;
-}
 
 .purchases-page {
   max-width: 1000px;
@@ -1019,10 +1021,7 @@ footer {
   .purchases-link {
     font-size: 0.8rem;
   }
-  .card-purchase .primary svg {
-    display: none;
-  }
-  .purchase-heading {
+    .purchase-heading {
     align-items: start;
   }
 }
@@ -1046,21 +1045,11 @@ footer {
   z-index: 1;
 }
 .card-purchase label,
-.card-purchase select,
-.card-purchase button {
+.card-purchase select {
   position: relative;
   z-index: 2;
 }
 .book-card:has(.book-card-detail:focus-visible) {
   outline: 2px solid #ffab91;
   outline-offset: 4px;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }

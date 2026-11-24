@@ -26,27 +26,22 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
   const carmilla = page.locator('.book-card').filter({
     has: page.getByRole('heading', { name: 'Carmilla', exact: true }),
   });
-  await carmilla
-    .getByRole('button', { name: 'Adicionar Carmilla à sacola' })
-    .click();
-  await expect(page).toHaveURL('http://localhost:3000/');
-  await expect(page.locator('.bag-link .count')).toHaveText('1');
-  await expect(page.getByRole('link', { name: /Ver sacola/ })).toHaveCount(0);
-  const badge = await page.locator('.bag-link .count').boundingBox();
-  const bag = await page.locator('.bag-link svg').boundingBox();
-  expect(badge!.y + badge!.height).toBeLessThanOrEqual(bag!.y + 2);
-  await expect(page.locator('.bag-link .count')).toHaveCSS(
-    'color',
-    'rgb(255, 107, 100)',
-  );
-  expect(
-    await page.evaluate(
-      () =>
-        JSON.parse(localStorage.getItem('nightjar.bag.v1') ?? '[]').find(
-          (line: any) => line.sku === 'CARM-HC',
-        )?.quantity,
-    ),
-  ).toBe(1);
+  const navigation = page.getByRole('navigation', {
+    name: 'Navegação principal',
+  });
+  await expect(
+    navigation.getByRole('link', { name: 'Home', exact: true }),
+  ).toHaveAttribute('href', '/');
+  await expect(
+    navigation.getByRole('link', { name: 'Estantes', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    navigation.getByRole('link', { name: 'Escolha da livraria', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('link', { name: 'Minhas compras', exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator('.book-card button')).toHaveCount(0);
   await carmilla.scrollIntoViewIfNeeded();
   const price = await carmilla.locator('.price').boundingBox();
   await page.mouse.click(
@@ -54,12 +49,31 @@ test('desktop catalogue uses the direct API and has twelve Portuguese titles', a
     price!.y + price!.height / 2,
   );
   await expect(page).toHaveURL(/\/books\/carmilla$/);
+  await page
+    .getByRole('button', { name: 'Adicionar à sacola', exact: true })
+    .click();
+  await expect(page.locator('.bag-link .count')).toHaveText('1');
+  const badge = await page.locator('.bag-link .count').boundingBox();
+  const bag = await page.locator('.bag-link svg').boundingBox();
+  expect(badge!.y + badge!.height).toBeLessThanOrEqual(bag!.y + 2);
+  expect(Math.abs(badge!.width - badge!.height)).toBeLessThan(1);
+  await expect(page.locator('.bag-link .count')).toHaveCSS(
+    'color',
+    'rgb(255, 107, 100)',
+  );
+  await expect(page.locator('.bag-link .count')).toHaveCSS(
+    'border-top-color',
+    'rgb(255, 107, 100)',
+  );
+  await expect(page.locator('.bag-link .count')).toHaveCSS(
+    'border-radius',
+    '50%',
+  );
+
   await page.goto('/');
-  const frankenstein = page
-    .locator('.book-card')
-    .filter({
-      has: page.getByRole('heading', { name: 'Frankenstein', exact: true }),
-    });
+  const frankenstein = page.locator('.book-card').filter({
+    has: page.getByRole('heading', { name: 'Frankenstein', exact: true }),
+  });
   await frankenstein
     .getByRole('combobox', { name: 'Edição', exact: true })
     .selectOption('FRAN-HC');
@@ -176,6 +190,9 @@ test('mobile purchase requires email login, keeps the bag and uses a single-use 
   await savedOrder.getByRole('link', { name: 'Ver pedido' }).click();
   await expect(page).toHaveURL(receipt);
   await page.getByRole('button', { name: 'Sair', exact: true }).click();
+  await expect(
+    page.getByRole('link', { name: 'Minhas compras', exact: true }),
+  ).toHaveCount(0);
   await page.goto(receipt);
   await expect(
     page.getByText('Entre na sua conta para continuar.'),

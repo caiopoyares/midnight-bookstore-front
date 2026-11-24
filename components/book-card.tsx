@@ -2,9 +2,7 @@
 import { useId, useState } from 'react';
 import Link from 'next/link';
 import { Book, money } from '../lib/api';
-import { useBag } from './bag';
 import { Cover } from './cover';
-import { Icon } from './icons';
 
 export function BookCard({ book, format }: { book: Book; format: string }) {
   const choices = book.editions.filter(
@@ -14,10 +12,7 @@ export function BookCard({ book, format }: { book: Book; format: string }) {
     (choices.find((e) => e.available > 0) ?? choices[0]).sku,
   );
   const edition = choices.find((e) => e.sku === sku)!;
-  const { lines, ready, add } = useBag();
-  const count = lines.find((line) => line.sku === sku)?.quantity ?? 0;
   const id = useId();
-  const disabled = !ready || count >= Math.min(99, edition.available);
   return (
     <article className="book-card">
       <Link className="book-card-detail" href={'/books/' + book.slug}>
@@ -47,26 +42,6 @@ export function BookCard({ book, format }: { book: Book; format: string }) {
           <span className="card-format">{edition.format}</span>
         )}
         <strong className="price">{money(edition.price)}</strong>
-        <button
-          className="primary"
-          disabled={disabled}
-          aria-label={'Adicionar ' + book.title + ' à sacola'}
-          onClick={() => add(book, sku, 1)}
-        >
-          <Icon name="bag" size={16} />
-          {edition.available === 0
-            ? 'Esgotado'
-            : count >= Math.min(99, edition.available)
-              ? 'Limite na sacola'
-              : 'Adicionar à sacola'}
-        </button>
-        <div className="sr-only" role="status">
-          {count > 0
-            ? count +
-              ' ' +
-              (count === 1 ? 'exemplar na sacola' : 'exemplares na sacola')
-            : ''}
-        </div>
       </div>
     </article>
   );

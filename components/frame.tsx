@@ -16,13 +16,14 @@ export function Header() {
           <Wordmark />
         </Link>
         <nav aria-label="Navegação principal">
-          <Link href="/#shelves">Estantes</Link>
-          <Link href="/books/hill-house">Escolha da livraria</Link>
+          <Link href="/">Home</Link>
         </nav>
         <div className="tools">
-          <Link className="account-button purchases-link" href="/purchases">
-            Minhas compras
-          </Link>
+          {user && (
+            <Link className="account-button purchases-link" href="/purchases">
+              Minhas compras
+            </Link>
+          )}
           {user ? (
             <button
               className="icon-button account-button"
